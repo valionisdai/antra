@@ -15,14 +15,31 @@ using namespace std;
 namespace fs = filesystem;
 
 template <template<typename> class Container>
-struct Studentas
-{
-    string vard;
-    string pav;
-    Container<int> paz;
-    int egzas;
-    float rez;
-    float med;
+class Studentas {
+    private:
+        string vard;
+        string pav;
+        Container<int> paz;
+        int egzas;
+        float rez;
+        float med;
+    public:
+        Studentas() = default;
+
+        void setVardas(const string& v) {vard = v;}
+        void setPavarde(const string& p) {pav = p;}
+        void addPazymys(int p) {paz.push_back(p);}
+        void setEgz(int e) {egzas = e;}
+        void setRez(float r) {rez = r;}
+        void setMed(float m) {med = m;}
+
+        string getVardas() const {return vard;}
+        string getPavarde() const {return pav;} 
+        Container<int>& getPaz() {return paz;}
+        const Container<int>& getPaz() const {return paz;}
+        int getEgz() const {return egzas;}
+        float getRez() const {return rez;}
+        float getMed() const {return med;}
 };
 
 template<template<typename> class Container>
@@ -55,10 +72,12 @@ template<template<typename> class Container>
 Studentas<Container> skaiciuojam(int a, int b)
 {
     Studentas<Container> laik;
-    int sum=0, m, j=0;
-
-    cout << "Iveskite varda:" << endl; cin >> laik.vard;
-    cout << "Iveskite pavarde:" << endl; cin >> laik.pav;
+    int sum=0, m, j=0, e;
+    string v, p;
+    cout << "Iveskite varda:" << endl; cin >> v;
+    cout << "Iveskite pavarde:" << endl; cin >> p;
+    laik.setVardas(v);
+    laik.setPavarde(p);
     if(a==1)
     {
         int kiek;
@@ -67,11 +86,11 @@ Studentas<Container> skaiciuojam(int a, int b)
         for(int i=0; i<kiek; i++)
             {
                 int pazymiai = pazym_gen();
-                laik.paz.push_back(pazymiai);
+                laik.addPazymys(pazymiai);
                 sum+=pazymiai;
             }
 
-        laik.egzas = pazym_gen();
+        laik.setEgz(pazym_gen());
         cout << "Issaugota" << endl;
     }
     else
@@ -81,12 +100,13 @@ Studentas<Container> skaiciuojam(int a, int b)
             {
                 while(true){if(cin >> m && m>=0 && m<=10) break; cout << "Neteisinga ivestis, maksimalus galimas paz. - 10, minimalus 1 (0 jei norite uzbaigti):" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
                 if(m==0) break;
-                laik.paz.push_back(m);
+                laik.addPazymys(m);
                 sum+=m;
                 j++;
             }
     cout << "Studento pazymiu skaicius: " << j << endl;
-    cout << "Iveskite studento egzamino rezultata: " << endl; cin >> laik.egzas;
+    cout << "Iveskite studento egzamino rezultata: " << endl; cin >> e;
+    laik.setEgz(e);
     }
     if(b==1)
         vidurkis(laik, sum);
@@ -103,26 +123,34 @@ Studentas<Container> skaiciuojam(int a, int b)
 template<template<typename> class Container>
 void vidurkis(Studentas<Container>& laik, int sum)
 {
-    laik.rez = laik.egzas*0.6 + ((float)sum/laik.paz.size())*0.4;
+    size_t n = laik.getPaz().size();
+    laik.setRez(laik.getEgz()*0.6 + (n > 0 ? (float)sum/n : 0.0f )*0.4);
 }
 
 template<template<typename> class Container>
 void skmediana(Studentas<Container>& laik)
 {
-    int paz_sk = laik.paz.size();
+    int paz_sk = laik.getPaz().size();
     float mediana;
+    if(paz_sk == 0)
+    {
+        mediana = 0.0;
+        laik.setMed(laik.getEgz() * 0.6 + mediana * 0.4);
+        return;
+    }
+    auto& paz = laik.getPaz();
     if constexpr (is_same_v<Container<int>,list<int>>)
     {
-        laik.paz.sort();
+        paz.sort();
         if (paz_sk == 0)
             mediana = 0.0;
         else
         {
-            auto it = laik.paz.begin();
+            auto it = paz.begin();
             std::advance(it, paz_sk / 2);
             if (paz_sk % 2 == 0)
             {
-                auto it2 = laik.paz.begin();
+                auto it2 = paz.begin();
                 std::advance(it2, paz_sk / 2 - 1);
                 mediana = (*it + *it2) / 2.0;
             }
@@ -134,18 +162,18 @@ void skmediana(Studentas<Container>& laik)
     {
         if (paz_sk % 2 == 0)
         {
-            nth_element(laik.paz.begin(), laik.paz.begin() + paz_sk / 2 - 1, laik.paz.end());
-            int left = laik.paz[paz_sk / 2 - 1];
-            nth_element(laik.paz.begin(), laik.paz.begin() + paz_sk / 2, laik.paz.end());
-            int right = laik.paz[paz_sk / 2];
+            nth_element(paz.begin(), paz.begin() + paz_sk / 2 - 1, paz.end());
+            int left = paz[paz_sk / 2 - 1];
+            nth_element(paz.begin(), paz.begin() + paz_sk / 2, paz.end());
+            int right = paz[paz_sk / 2];
             mediana = (left + right) / 2.0;
         }
         else
         {
-            nth_element(laik.paz.begin(), laik.paz.begin() + paz_sk / 2, laik.paz.end());
-            mediana = laik.paz[paz_sk / 2];
+            nth_element(paz.begin(), paz.begin() + paz_sk / 2, paz.end());
+            mediana = paz[paz_sk / 2];
         }
-        laik.med = laik.egzas * 0.6 + mediana * 0.4;
+        laik.setMed(laik.getEgz() * 0.6 + mediana * 0.4);
     }
 }
 
@@ -154,25 +182,9 @@ Container<Studentas<Container>> failas(int b, string failvardas)
 {
     string failvar;
     Container<Studentas<Container>> Grupe;
-    // if("1"==failvardas)
-    // {
-    //     int l;
-    //     cout << "Is kurio failo norite skaityti duomenis?\n(1) kursiokai.txt\n(2) studentai10000.txt\n(3) studentai100000.txt\n(4) studentai1000000.txt" << endl;
-    // while(true)
-    // {if(cin >> l && l>=1 && l<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
-    // if(l==1)
-    //      failvar = "./src/kursiokai.txt";
-    // else if(l==2)
-    //      failvar = "./src/studentai10000.txt";
-    // else if(l==3)
-    //      failvar = "./src/studentai100000.txt";
-    // else if(l==4)
-    //      failvar = "./src/studentai1000000.txt";
-    // }
-    // else 
     failvar = failvardas;
-    stringstream buffer = skaitymas("./src/"+failvar);
-    string line, z;
+    stringstream buffer = skaitymas(failvar);
+    string line, z, v, p;
 
     int k = 0;
     getline(buffer, line);
@@ -189,14 +201,17 @@ Container<Studentas<Container>> failas(int b, string failvardas)
         if (line.empty()) continue;
         istringstream iss(line);
         Studentas<Container> laik;
-        int paz, sum = 0;
-        iss >> laik.vard >> laik.pav;
+        int paz, sum = 0, e;
+        iss >> v >> p;
+        laik.setVardas(v);
+        laik.setPavarde(p);
         for (int i = 0; i < k; i++) {
             if (!(iss >> paz)) break;
-            laik.paz.push_back(paz);
+            laik.addPazymys(paz);
             sum += paz;
         }
-        iss >> laik.egzas;
+        iss >> e;
+        laik.setEgz(e);
 
         if (b == 1) vidurkis(laik, sum);
         else if (b == 2) skmediana(laik);
@@ -224,10 +239,10 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
     Grupe.sort([=](const Studentas<Container>& a, const Studentas<Container>& b)
     {switch (g)
          {
-          case 1: return h==1 ? a.vard < b.vard : a.vard > b.vard;
-          case 2: return h==1 ? a.pav < b.pav : a.pav > b.pav;
-          case 3: return h==1 ? a.rez < b.rez : a.rez > b.rez;
-          case 4: return h==1 ? a.med < b.med : a.med > b.med;
+          case 1: return h==1 ? a.getVardas() < b.getVardas() : a.getVardas() > b.getVardas();
+          case 2: return h==1 ? a.getPavarde() < b.getPavarde() : a.getPavarde() > b.getPavarde();
+          case 3: return h==1 ? a.getRez() < b.getRez() : a.getRez() > b.getRez();
+          case 4: return h==1 ? a.getMed() < b.getMed() : a.getMed() > b.getMed();
           default: return false;
          }});
     auto end = chrono::high_resolution_clock::now();
@@ -240,10 +255,10 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
         sort(std::execution::par, Grupe.begin(), Grupe.end(), [=](const Studentas<Container>& a, const Studentas<Container>& b)
         { switch (g)
          {
-          case 1: return h==1 ? a.vard < b.vard : a.vard > b.vard;
-          case 2: return h==1 ? a.pav < b.pav : a.pav > b.pav;
-          case 3: return h==1 ? a.rez < b.rez : a.rez > b.rez;
-          case 4: return h==1 ? a.med < b.med : a.med > b.med;
+          case 1: return h==1 ? a.getVardas() < b.getVardas() : a.getVardas() > b.getVardas();
+          case 2: return h==1 ? a.getPavarde() < b.getPavarde() : a.getPavarde() > b.getPavarde();
+          case 3: return h==1 ? a.getRez() < b.getRez() : a.getRez() > b.getRez();
+          case 4: return h==1 ? a.getMed() < b.getMed() : a.getMed() > b.getMed();
           default: return false;
          }
         });
@@ -258,7 +273,7 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
 
         for(auto it=Grupe.begin(); it!=Grupe.end();)
         {
-            if(it->rez >= 5)
+            if(it->getRez() >= 5)
                 blogai.splice(blogai.end(), Grupe, it++);
             else ++it;
         }
@@ -272,7 +287,7 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
         auto startas = chrono::high_resolution_clock::now();
 
 
-        auto it = partition(Grupe.begin(), Grupe.end(), [](const auto& s) {return s.rez < 5;});
+        auto it = partition(Grupe.begin(), Grupe.end(), [](const auto& s) {return s.getRez() < 5;});
         blogai.insert(blogai.end(), std::make_move_iterator(it), std::make_move_iterator(Grupe.end()));
         Grupe.erase(it, Grupe.end());
 
@@ -303,10 +318,10 @@ void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failo
     for(auto it = Grupe.begin(); it != Grupe.end(); ++it)
     {
         const auto& temp = *it;
-        oss << setw(18) << right << temp.vard << " | " << setw(18) << temp.pav << " | " << setw(18) << fixed << right << setprecision(2);
-        if(b==1) oss << temp.rez << " | " << setw(17) << &(*it) << endl;
-        else if(b==2) oss << temp.med << " | " << setw(17) << &(*it) << endl;
-        else if (b==3) oss << temp.rez << " | " << setw(22) <<  right << temp.med << " | " << setw(17) << fixed << right << &(*it) << endl;
+        oss << setw(18) << right << temp.getVardas() << " | " << setw(18) << temp.getPavarde() << " | " << setw(18) << fixed << right << setprecision(2);
+        if(b==1) oss << temp.getRez() << " | " << setw(17) << &(*it) << endl;
+        else if(b==2) oss << temp.getMed() << " | " << setw(17) << &(*it) << endl;
+        else if (b==3) oss << temp.getRez() << " | " << setw(22) <<  right << temp.getMed() << " | " << setw(17) << fixed << right << &(*it) << endl;
     }
     wr << oss.str();
     wr.close();
