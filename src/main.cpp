@@ -28,7 +28,7 @@ int main()
             cout << "Generavimas baigtas!" << endl;
         }
     }
-    string folder = "./src/", nfailas;
+    string folder = "./", nfailas;
         for(const auto& entry : fs::directory_iterator(folder))
         {
             if(entry.path().extension() == ".txt" && entry.path().filename().string().find("rez") == string::npos)
@@ -59,7 +59,6 @@ int main()
         while(tst!=0)
         {
             cin >> nfailas;
-            nfailas=nfailas;
             for(const auto&temp:failai_txt)
                 if(temp==nfailas) tst=0;
             if(tst!=0)
