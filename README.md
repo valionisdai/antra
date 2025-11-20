@@ -1,4 +1,7 @@
 # v1.1
+Optimizuotas kodas Pridetas CMakeLists.txt failas. 
+Galima naudoti CMake kodo paleidimui. 
+Pridėtas "run.bat" failas paprastesniam paleidimui.
   
 
 # v1.0
