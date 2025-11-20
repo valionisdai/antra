@@ -30,9 +30,7 @@ int generuojame()
 {
     int a=1000, n;
     cout << "Iveskite skaiciu pazymiu, kuriuos norite sugeneruoti (ne daugiau 20, be egz.): " << endl;
-        while(true)
-        {
-            if(cin >> n && n>0 && n<21) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 20." << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
+        while(true){if(cin >> n && n>0 && n<21) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 20." << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
     auto start = chrono::high_resolution_clock::now();
     for(int i=1;i<=5;i++)
     {
