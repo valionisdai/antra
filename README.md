@@ -1,3 +1,6 @@
+# v1.1
+  
+
 # v1.0
   Atnaujintas kodas, matuotas laikas rodomas po kablelio.
   Optimizuotas kodas.
