@@ -25,6 +25,53 @@ class Studentas {
         float med;
     public:
         Studentas() = default;
+        ~Studentas() = default;
+        static int mode;
+
+        Studentas(const Studentas& other)
+                : vard(other.vard),
+        pav(other.pav),
+        paz(other.paz),
+        egzas(other.egzas),
+        rez(other.rez),
+        med(other.med)
+        {}
+
+        Studentas& operator=(const Studentas& other)
+        {
+            if (this != &other) {
+            vard = other.vard;
+            pav = other.pav;
+            paz = other.paz;
+            egzas = other.egzas;
+            rez = other.rez;
+            med = other.med;
+            }
+            return *this;
+        }
+
+        Studentas(Studentas&& other) noexcept
+            : vard(std::move(other.vard)),
+            pav(std::move(other.pav)),
+            paz(std::move(other.paz)),
+            egzas(other.egzas),
+            rez(other.rez),
+            med(other.med)
+            {}
+
+        Studentas& operator=(Studentas&& other) noexcept
+        {
+            if (this != &other) {
+            vard = std::move(other.vard);
+            pav = std::move(other.pav);
+            paz = std::move(other.paz);
+            egzas = other.egzas;
+            rez = other.rez;
+            med = other.med;
+            }
+        return *this;
+        }
+
 
         void setVardas(const string& v) {vard = v;}
         void setPavarde(const string& p) {pav = p;}
@@ -34,12 +81,23 @@ class Studentas {
         void setMed(float m) {med = m;}
 
         string getVardas() const {return vard;}
-        string getPavarde() const {return pav;} 
+        string getPavarde() const {return pav;}
         Container<int>& getPaz() {return paz;}
         const Container<int>& getPaz() const {return paz;}
         int getEgz() const {return egzas;}
         float getRez() const {return rez;}
         float getMed() const {return med;}
+
+        friend ostream& operator<<(ostream& out, const Studentas& temp) {
+            out << formatavimas(temp, Studentas<Container>::mode);
+            return out;
+        }
+
+        friend ifstream& operator>>(ifstream& in, Studentas& temp) {
+            in >> temp.vard >> temp.pav;
+            return in;
+        }
+
 };
 
 template<template<typename> class Container>
@@ -54,8 +112,14 @@ void vidurkis(Studentas<Container>& laik, int sum);
 template<template<typename> class Container>
 void skmediana(Studentas<Container>& laik);
 
+template<template<typename> class Container>
+int Studentas<Container>::mode = 1;
+
 int pazym_gen();
 int generuojame();
+
+template<template<typename> class Container>
+string formatavimas(const Studentas<Container>& temp, int b);
 
 template<template<typename> class Container>
 void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failovardas);
@@ -183,7 +247,7 @@ Container<Studentas<Container>> failas(int b, string failvardas)
     string failvar;
     Container<Studentas<Container>> Grupe;
     failvar = failvardas;
-    stringstream buffer = skaitymas(failvar);
+    stringstream buffer = skaitymas("./src/"+failvar);
     string line, z, v, p;
 
     int k = 0;
@@ -304,27 +368,35 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
 template<template<typename> class Container>
 void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failovardas)
 {
-    if(failovardas.find("txt") != std::string::npos)
-        failovardas = "rez_"+failovardas;
-    else
-        failovardas = "rez_"+failovardas +".txt";
-    ofstream wr(failovardas);
+    Studentas<Container>::mode = b;
+    bool arfailas = false;
+    int renkames, kiek = 0;
+    cout << "Norite isvedimo i:\n(1) Faila\n(2) Konsole" << endl;
+    while(true){if(cin >> renkames && renkames>=1 && renkames<=2) break; cout << "Neteisinga ivestis, pasirinkite 1 arba 2" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
+    if(renkames==1) arfailas = true;
+    ofstream wr;
     ostringstream oss;
+    ostream& isved = arfailas ? static_cast<ostream&>(oss) : cout;
+
     auto startas = chrono::high_resolution_clock::now();
-    oss << setw(21) << right << "Vardas | " << setw(21) << right << "Pavarde | " << setw(21) << right;
-    if(b==1) {oss << "Galutinis (Vid.)"  << " | Adresas atmintyje" << " \n----------------------------------------------------------------" << endl;}
-            else if(b==2) {oss << "Galutinis (Med.) "  << " | Adresas atmintyje" << "\n-------------------------------------------------------" << endl;}
-            else if(b==3) {oss << "Galutinis (Vid.) | " << setw(21) << right << "Galutinis (Med.)"  << setw(21) << right<<  " | Adresas atmintyje" << "\n---------------------------------------------------------------------------------------------------------" << endl;}
-    for(auto it = Grupe.begin(); it != Grupe.end(); ++it)
-    {
-        const auto& temp = *it;
-        oss << setw(18) << right << temp.getVardas() << " | " << setw(18) << temp.getPavarde() << " | " << setw(18) << fixed << right << setprecision(2);
-        if(b==1) oss << temp.getRez() << " | " << setw(17) << &(*it) << endl;
-        else if(b==2) oss << temp.getMed() << " | " << setw(17) << &(*it) << endl;
-        else if (b==3) oss << temp.getRez() << " | " << setw(22) <<  right << temp.getMed() << " | " << setw(17) << fixed << right << &(*it) << endl;
+    isved << setw(21) << right << "Vardas | " << setw(21) << right << "Pavarde | " << setw(21) << right;
+    if(b==1) {isved << "Galutinis (Vid.)"  << " | Adresas atmintyje\n" << string(64, '-') << endl;}
+            else if(b==2) {isved << "Galutinis (Med.) "  << " | Adresas atmintyje\n" << string(55, '-') << endl;}
+            else if(b==3) {isved << "Galutinis (Vid.) | " << setw(21) << right << "Galutinis (Med.)"  << setw(21) << right<<  " | Adresas atmintyje\n" << string(105, '-') << endl;}
+    for(const auto& temp:Grupe) {
+        if(!arfailas && kiek++ >=20) break;
+        isved << temp << " | " << &temp << endl;
     }
-    wr << oss.str();
-    wr.close();
+
+    if(arfailas)
+    {
+        if(failovardas.find("txt") == std::string::npos)
+            failovardas += ".txt";
+        failovardas = "rez_"+failovardas;
+        wr.open(failovardas);
+        wr << oss.str();
+        wr.close();
+    }
     auto endas = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed = endas - startas;
     cout << "Failo " << failovardas << " rasymo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
@@ -335,4 +407,16 @@ void dirbam(int b, string nfailas, int g, int h)
 {
     Container<Studentas<Container>> Grupe = failas<Container>(b, nfailas);
     rusiavimas<Container>(b, Grupe, nfailas, g, h);
+}
+
+template<template<typename> class Container>
+string formatavimas(const Studentas<Container>& temp, int b)
+{
+    ostringstream oss;
+    oss << setw(18) << right << temp.getVardas() << " | " << setw(18) << temp.getPavarde() << " | ";
+    oss << fixed << setprecision(2);
+    if(b==1) oss << setw(18) << right << temp.getRez();
+    else if(b==2) oss << setw(18) << right << temp.getMed();
+    else if (b==3) oss << setw(18) << right << temp.getRez() << " | " << setw(22) <<  right << temp.getMed();
+    return oss.str();
 }
