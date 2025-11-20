@@ -1,7 +1,6 @@
 #include "mylib.h"
 
 
-
 int main()
 {
     ios::sync_with_stdio(false);
@@ -28,7 +27,7 @@ int main()
             cout << "Generavimas baigtas!" << endl;
         }
     }
-    string folder = "./", nfailas;
+    string folder = "./src", nfailas;
         for(const auto& entry : fs::directory_iterator(folder))
         {
             if(entry.path().extension() == ".txt" && entry.path().filename().string().find("rez") == string::npos)
