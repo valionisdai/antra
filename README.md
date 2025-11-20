@@ -1,10 +1,16 @@
+# v.1.2
+  Optimizuotas kodas
+  Pridėta "rule of three" ir įvesties/išvesties operatoriai klasėje.
+
 # v1.1
-  
+  Optimizuotas kodas
+  Pridetas ***CMakeLists.txt*** failas.
+  Galima naudoti CMake kodo paleidimui.
+  Pridėtas "run.bat" failas paprastesniam paleidimui.
 
 # v1.0
   Atnaujintas kodas, matuotas laikas rodomas po kablelio.
   Optimizuotas kodas.
-  Pridetas ***CMakeLists.txt*** failas.
   
   Atlikti rūšiavimo spartos testai:
   ### Naudojant  `vector` konteineri
