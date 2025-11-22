@@ -1,7 +1,24 @@
 # v1.1
-Optimizuotas kodas Pridetas CMakeLists.txt failas. 
-Galima naudoti CMake kodo paleidimui. 
-Pridėtas "run.bat" failas paprastesniam paleidimui.
+Optimizuotas kodas Pridetas CMakeLists.txt failas.   
+Galima naudoti CMake kodo paleidimui.   
+Pridėtas "run.bat" failas paprastesniam paleidimui.  
+
+Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą):
+### Naudojant  `vector` konteineri    
+| **Flag'ai** |`class`||`struct`||
+|:---|:--:|:---:|:--:|:--:|
+||Greitis|Size|Greitis|Size|
+|O1|  |  |  |  |
+|O2|  |  |  |  |
+|O3| 30.354s | 313KB | 23.658s | 356KB |
+
+### Naudojant  `list` konteineri    
+| **Flag'ai** |`class`||`struct`||
+|:---|:--:|:---:|:--:|:--:|
+||Greitis|Size|Greitis|Size|
+|O1|  |  |  |  |
+|O2|  |  |  |  |
+|O3| 38.108s | 313KB | 37.566s | 356KB |
   
 
 # v1.0
