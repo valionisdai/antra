@@ -3,22 +3,22 @@ Optimizuotas kodas Pridetas CMakeLists.txt failas.
 Galima naudoti CMake kodo paleidimui.   
 Pridėtas "run.bat" failas paprastesniam paleidimui.  
 
-Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą):
+Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą, su 23 stulpeliais):
 ### Naudojant  `vector` konteineri    
 | **Flag'ai** |`class`||`struct`||
 |:---|:--:|:---:|:--:|:--:|
 ||Greitis|Size|Greitis|Size|
-|O1|  |  |  |  |
-|O2|  |  |  |  |
-|O3| 30.354s | 313KB | 23.658s | 356KB |
+|O1| 48.977s | 329KB | s | KB |
+|O2| 49.098s | 307KB | s | KB |
+|O3| 49.682s | 313KB | s | KB |
 
 ### Naudojant  `list` konteineri    
 | **Flag'ai** |`class`||`struct`||
 |:---|:--:|:---:|:--:|:--:|
 ||Greitis|Size|Greitis|Size|
-|O1|  |  |  |  |
-|O2|  |  |  |  |
-|O3| 38.108s | 313KB | 37.566s | 356KB |
+|O1| 60.360s | 329KB | s | KB |
+|O2| 65.702s | 307KB | s | KB |
+|O3| 65.323s | 313KB | s | KB |
   
 
 # v1.0
@@ -26,26 +26,46 @@ Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą):
   Optimizuotas kodas.
   Pridetas ***CMakeLists.txt*** failas.
   
-  Atlikti rūšiavimo spartos testai:
-  ### Naudojant  `vector` konteineri
-  | Failai | **1 strategija** | **2 strategija** | **3 strategija** |
-  |:---|:-------------:|:-------------:|:-------------:|
-  | **stud_1000.txt**     | 0 s | 0 s | 0.000 s|
-  | **stud_10000.txt**    | 0 s | 0 s | 0.000 s|
-  | **stud_100000.txt**   | 0 s | 18 s | 0.005 s|
-  | **stud_1000000.txt**  | 0 s | --* | 0.060 s|
-  | **stud_10000000.txt** | 3 s | --* | 0.598 s|
+  #### Atlikti rūšiavimo spartos testai:
+  ***1 strategija***:  
+  Bendras studentų konteineris padalinamas į du - ***gerai*** ir ***blogai***.
+  Vienas studentas egzistuoja dviejuose konteineriuose: *bendrame* ir ***gerai***/***blogai***, rūšiavimo greitį lemia konteinerio tipas, tačiau atminties sąnaudos didelės.     
+  ***2 strategija***:   
+  Sukuriamas tik vienas naujas konteineris ***blogai***. Studentai, kurie perkeliami į konteinerį ***blogai*** yra ištrinami iš pirmojo konteinerio.
+  Vienas studentas egzistuoja tik viename konteineryje. Atmintis naudojama efektyviau, tačiau trynimai gali būti lėti.   
+  ***3 strategija***:  
+  Pasirinkta 2 strategija ir naudojamas `partition` greitesniam rūšiavimui. Rūšiavimas vyksta greičiau negu naudojant pirmą arba antrą strategijas.  
+  ***4 strategija***:  
+  `vector` ir `list` taikomos skirtingos strategijos. `list` naudoja `splice` metodą, o `vector` naudoja `partition`.  
+  Naudojami tik 2 konteineriai, o sukuriamas naujai tik vienas. Studentas egzistuoja tik viename. 
   
-  *Testas truko per ilgai
-
+  ### Naudojant  `vector` konteineri
+  | Failai | **1 strategija** | **2 strategija** | **3 strategija**| **4 strategija**** |
+  |:---|:-------------:|:-------------:|:-------------:| :--: |
+  | **stud_1000.txt**     | 0 s | 0 s | 0.000s |0.000 s|
+  | **stud_10000.txt**    | 0 s | 0 s | 0.000s |0.000 s|
+  | **stud_100000.txt**   | 0 s | 18 s| 0.002s |0.002 s|
+  | **stud_1000000.txt**  | 0 s | --* | 0.033s |0.033 s|
+  | **stud_10000000.txt** | 3 s | --* | 0.350s |0.338 s|
+  
   ### Naudojant  `list` konteineri
-  | Failai | **1 strategija** | **2 strategija** | **3 strategija** |
-  |:---|:-------------:|:-------------:|:-------------:|
-  | **stud_1000.txt**     | 0s | 0s | 0.000 s|
-  | **stud_10000.txt**    | 0s | 0s | 0.000 s|
-  | **stud_100000.txt**   | 0s | 0s | 0.019 s|
-  | **stud_1000000.txt**  | 1s | 0s | 0.167 s|
-  | **stud_10000000.txt** | 16s | 7s | 1.889 s|
+  | Failai | **1 strategija** | **2 strategija** | **3 strategija**| **4 strategija**** |
+  |:---|:-------------:|:-------------:|:-------------:| :--: |
+  | **stud_1000.txt**     | 0s | 0s | 0.000s |0.000 s|
+  | **stud_10000.txt**    | 0s | 0s | 0.001s |0.000 s|
+  | **stud_100000.txt**   | 0s | 0s | 0.023s |0.019 s|
+  | **stud_1000000.txt**  | 1s | 0s | 0.320s |0.167 s|
+  | **stud_10000000.txt** | 16s | 7s| 4.077s |1.889 s|
+  
+  *Testas truko per ilgai  
+  **Vector ir list konteineriams skiriasi (list naudoja `splice`)
+
+  ### Naudojimosi instrukcija
+  1. Patikrinkite ar kompiuteryje turite įdiegtus ***C++ kompiliatorių*** bei projekto generavimo įrankius ***CMake***, jei ne - parsisiųskite ir įsidiegite.
+  2. Atsisiųskite failus *main.cpp*, *mylib.cpp*, *mylib.h*, *CMakeLists.txt*, *run.bat*.
+  3. Apklanke, kuriame bus vykdomas kodas (jūsų pasirinkimas) sukurkite aplankus **"src"** ir **"Include"**, ir į juos perkelkite failus. *main.cpp* ir *mylib.cpp* į aplanką **"src"**, o *mylib.h* į apklanką **"Include"**. *CMakeLists.txt* ir *run.bat* failus palikite aplanke, kur bus vykdomas Jūsų kodas.
+  4. Paleiskite *run.bat* failą. Jame yra surašytos visos komandos, reikalingos programos kodo paleidimui.
+  5. Norėdami po programos uždarymo vėl paleisti programą, leiskite arba *run.bat*, arba *Work_with_Files.exe* failus.
 
 
 # v0.3
@@ -99,6 +119,3 @@ Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą):
   5. Sutvarkytas pažymių įvedimas (nebėra ribojamas jų skaičius), pataisytos kitos smulkios klaidos.
   6. Pridėtas pasirinkimas skaičiuoti mediana, vidurki ar abu.
   7. Pridėtas skaitymas iš failo, šiek tiek optimizuotas kodas.
-
-
-
