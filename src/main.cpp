@@ -1,4 +1,5 @@
 #include "mylib.h"
+#include "globals.h"
 
 
 
@@ -8,7 +9,7 @@ int main()
     cin.tie(nullptr);
 
     vector<string> failai_txt;
-    int a, b, c, d, e, g, h;
+    int a, c, d, e;
 
     cout << "Ar turite duomenis? (1 - taip, 2 - ne)" << endl;
     while(true) {if(cin >> d && d>=1 && d<=2) break; cout << "Neteisinga ivestis, pasirinkite 1 arba 2" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
@@ -28,7 +29,7 @@ int main()
             cout << "Generavimas baigtas!" << endl;
         }
     }
-    string folder = "./", nfailas;
+    string folder = "./src/", nfailas;
         for(const auto& entry : fs::directory_iterator(folder))
         {
             if(entry.path().extension() == ".txt" && entry.path().filename().string().find("rez") == string::npos)
@@ -65,16 +66,17 @@ int main()
                 cout << "Tokio failo nera, bandykite dar karta" << endl;
         }
 
-        cout << "Norite rusiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
+        cout << "Norite rikiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
         while(true) {if(cin >> g && g>=1 && g<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
 
         cout << "Pasirinkite krypti:\n(1) Didejancia tvarka\n(2) Mazejancia tvarka" << endl;
         while(true) {if(cin >> h && 0<h && h<3) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 2:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
-
+        cout << "Kuria strategija norite naudoti rusiavimui?\n(1) Pirma\n(2) Antra\n(3) Trecia\n(4) Greiciausia abiems (skiriasi vektoriui ir sarasui)" << endl;
+        while(true) {if(cin >> f && f>=1 && f<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
         if(e==1)
-            dirbam<vector>(b, nfailas, g, h);
+            dirbam<vector>(nfailas);
         else if(e==2)
-            dirbam<list>(b, nfailas, g, h);
+            dirbam<list>(nfailas);
     }
     else
     {
@@ -85,27 +87,31 @@ int main()
         {
             vector<Studentas<vector>> Grupe;
             for(int i=1; i<=n; i++)
-                Grupe.push_back(skaiciuojam<vector>(a, b));
-            cout << "Norite rusiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
+                Grupe.push_back(skaiciuojam<vector>(a));
+            cout << "Norite rikiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
             while(true) {if(cin >> g && g>=1 && g<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
             cout << "Pasirinkite krypti:\n(1) Didejancia tvarka\n(2) Mazejancia tvarka" << endl;
             while(true) {if(cin >> h && 0<h && h<3) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 2:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
-            rusiavimas<vector>(b, Grupe, "1", g, h);
+            cout << "Kuria strategija norite naudoti rusiavimui?\n(1) Pirma\n(2) Antra\n(3) Trecia\n(4) Greiciausia abiems (skiriasi vektoriui ir sarasui)" << endl;
+            while(true) {if(cin >> f && f>=1 && f<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
+            kaip_rusiuojam<vector>(Grupe, "1");
         }
         else
         {
             auto start = chrono::high_resolution_clock::now();
             list<Studentas<list>> Grupe;
             for(int i=1; i<=n; i++)
-                Grupe.push_back(skaiciuojam<list>(a, b));
+                Grupe.push_back(skaiciuojam<list>(a));
             auto end = chrono::high_resolution_clock::now();
             chrono::duration<double> elaps = end - start;
             cout << "Skaiciavimo laikas: " << fixed << setprecision(3) << elaps.count() << " s" << endl;
-            cout << "Norite rusiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
+            cout << "Norite rikiuoti pagal:\n(1) Varda, (2) Pavarde, (3) Gal. Vid., (4) Gal. Med." << endl;
             while(true) {if(cin >> g && g>=1 && g<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
             cout << "Pasirinkite krypti:\n(1) Didejancia tvarka\n(2) Mazejancia tvarka" << endl;
             while(true) {if(cin >> h && 0<h && h<3) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 2:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
-            rusiavimas<list>(b, Grupe, "1", g, h);
+            cout << "Kuria strategija norite naudoti rusiavimui?\n(1) Pirma\n(2) Antra\n(3) Trecia\n(4) Greiciausia abiems (skiriasi vektoriui ir sarasui)" << endl;
+            while(true) {if(cin >> f && f>=1 && f<=4) break; cout << "Neteisinga ivestis, pasirinkite skaiciu nuo 1 iki 4:" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
+            kaip_rusiuojam<list>(Grupe, "1");
         }
     }
     int kl;
