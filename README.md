@@ -5,8 +5,6 @@
   Operatorius `>>` yra perdengtas, nes galima turėti kelias versijas priklausomai nuo srauto tipo (`istream` arba `ifstream`). Rankinė įvestis leidžia vartotojui įvesti duomenis per konsolę. Įvestis iš failo leidžia nuskaityti studentų duomenis iš tekstinio failo. Automatinė generacija nėra operatorius – tai klasės metodas, kuris sugeneruoja atsitiktinius ar pavyzdinius duomenis.  
   Operatorius `<<` yra perdengtas vienu metodu, bet jis veikia su bet kuriuo `ostream` objektu (`cout`, `ofstream`).Tai leidžia spausdinti studento vardą, pavardę, pažymius, vidurkį ir egzamino rezultatą į ekraną arba į failą naudojant tą patį operatorių.
 
-
-
 # v1.1
 Optimizuotas kodas Pridetas CMakeLists.txt failas.   
 Galima naudoti CMake kodo paleidimui.   
@@ -17,18 +15,21 @@ Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą, su 
 | **Flag'ai** |`class`||`struct`||
 |:---|:--:|:---:|:--:|:--:|
 ||Greitis|Size|Greitis|Size|
-|O1| 48.977s | 329KB | s | KB |
-|O2| 49.098s | 307KB | s | KB |
-|O3| 49.682s | 313KB | s | KB |
+|O1| 49.787s | 318KB | 38.493s | 392KB |
+|O2| 49.149s | 293KB | 38.104s | 338KB |
+|O3| 48.683s | 296KB | 37.501s | 329KB |
 
 ### Naudojant  `list` konteineri    
 | **Flag'ai** |`class`||`struct`||
 |:---|:--:|:---:|:--:|:--:|
 ||Greitis|Size|Greitis|Size|
-|O1| 60.360s | 329KB | s | KB |
-|O2| 65.702s | 307KB | s | KB |
-|O3| 65.323s | 313KB | s | KB |
+|O1| 64.010s | 318KB | 61.955s | 392KB |
+|O2| 64.025s | 293KB | 60.056s | 338KB |
+|O3| 64.499s | 296KB | 58.153s | 329KB |
   
+su debugu: 2086 kb 63653 ms listas 49714
+2024 kb 64276 ms listas 50441
+2152 kb 
 
 # v1.0
   Atnaujintas kodas, matuotas laikas rodomas po kablelio.
@@ -128,3 +129,4 @@ Atliktas spartos ir atminties testas (naudojant 10 000 000 eilučių failą, su 
   5. Sutvarkytas pažymių įvedimas (nebėra ribojamas jų skaičius), pataisytos kitos smulkios klaidos.
   6. Pridėtas pasirinkimas skaičiuoti mediana, vidurki ar abu.
   7. Pridėtas skaitymas iš failo, šiek tiek optimizuotas kodas.
+
