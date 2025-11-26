@@ -1,4 +1,5 @@
 #include "mylib.h"
+#include "globals.h"
 
 stringstream skaitymas(string failvar)
 {
