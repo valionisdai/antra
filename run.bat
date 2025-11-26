@@ -1,6 +1,9 @@
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-O3 -funroll-loops -march=native" CMakeLists.txt
+@echo off
+mkdir build
+cd build
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-flto=auto -O3 -funroll-loops -march=znver3" ..
 cmake --build .
-cmake --install .
+
 Work_with_Files.exe
 pause
-
