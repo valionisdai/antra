@@ -1,3 +1,4 @@
+#include "globals.h"
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -24,8 +25,10 @@ class Studentas {
         float rez;
         float med;
     public:
-        Studentas() = default;
-        ~Studentas() = default;
+        Studentas() : vard(""), pav(""), egzas(0), rez(0.0f), med(0.0f) {}
+        
+        ~Studentas() {}
+
         static int mode;
 
         Studentas(const Studentas& other)
@@ -54,9 +57,9 @@ class Studentas {
             : vard(std::move(other.vard)),
             pav(std::move(other.pav)),
             paz(std::move(other.paz)),
-            egzas(other.egzas),
-            rez(other.rez),
-            med(other.med)
+            egzas(std::move(other.egzas)),
+            rez(std::move(other.rez)),
+            med(std::move(other.med))
             {}
 
         Studentas& operator=(Studentas&& other) noexcept
@@ -65,23 +68,24 @@ class Studentas {
             vard = std::move(other.vard);
             pav = std::move(other.pav);
             paz = std::move(other.paz);
-            egzas = other.egzas;
-            rez = other.rez;
-            med = other.med;
+            egzas = std::move(other.egzas);
+            rez = std::move(other.rez);
+            med = std::move(other.med);
             }
         return *this;
         }
 
-
         void setVardas(const string& v) {vard = v;}
+        void setVardas(string&& v) {vard = std::move(v);}
         void setPavarde(const string& p) {pav = p;}
+        void setPavarde(string&& p) {pav = std::move(p);}
         void addPazymys(int p) {paz.push_back(p);}
         void setEgz(int e) {egzas = e;}
         void setRez(float r) {rez = r;}
         void setMed(float m) {med = m;}
 
-        string getVardas() const {return vard;}
-        string getPavarde() const {return pav;}
+        const string& getVardas() const {return vard;}
+        const string& getPavarde() const {return pav;} 
         Container<int>& getPaz() {return paz;}
         const Container<int>& getPaz() const {return paz;}
         int getEgz() const {return egzas;}
@@ -89,7 +93,7 @@ class Studentas {
         float getMed() const {return med;}
 
         friend ostream& operator<<(ostream& out, const Studentas& temp) {
-            out << formatavimas(temp, Studentas<Container>::mode);
+            out << temp.getVardas() << " " << temp.getPavarde();
             return out;
         }
 
@@ -97,14 +101,13 @@ class Studentas {
             in >> temp.vard >> temp.pav;
             return in;
         }
-
 };
 
 template<template<typename> class Container>
-Studentas<Container> skaiciuojam(int a, int b);
+Studentas<Container> skaiciuojam(int a);
 
 template<template<typename> class Container>
-Container<Studentas<Container>> failas(int b, string failvardas);
+Container<Studentas<Container>> failas(string failvardas);
 
 template<template<typename> class Container>
 void vidurkis(Studentas<Container>& laik, int sum);
@@ -112,28 +115,40 @@ void vidurkis(Studentas<Container>& laik, int sum);
 template<template<typename> class Container>
 void skmediana(Studentas<Container>& laik);
 
-template<template<typename> class Container>
-int Studentas<Container>::mode = 1;
-
 int pazym_gen();
 int generuojame();
 
-template<template<typename> class Container>
-string formatavimas(const Studentas<Container>& temp, int b);
+template <template<typename> class Container>
+int Studentas <Container>::mode = 1;
 
 template<template<typename> class Container>
-void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failovardas);
+void isvedimas(const Container<Studentas<Container>>& Grupe, string failovardas);
 
 stringstream skaitymas(string failvar);
 
 template <template<typename> class Container>
-void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovardas, int g, int h);
+void rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas);
 
 template<template<typename> class Container>
-void dirbam(int b, string nfailas, int g, int h);
+void dirbam(string nfailas);
 
 template<template<typename> class Container>
-Studentas<Container> skaiciuojam(int a, int b)
+void kaip_rusiuojam(Container<Studentas<Container>>& Grupe, string failovardas);
+
+template <template<typename> class Container>
+void rikiavimas(Container<Studentas<Container>>& Grupe, string failovardas);
+    
+template <template<typename> class Container>
+void trecia_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas);
+
+template <template<typename> class Container>
+void antra_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas);
+
+template <template<typename> class Container>
+void pirma_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas);
+
+template<template<typename> class Container>
+Studentas<Container> skaiciuojam(int a)
 {
     Studentas<Container> laik;
     int sum=0, m, j=0, e;
@@ -242,14 +257,13 @@ void skmediana(Studentas<Container>& laik)
 }
 
 template<template<typename> class Container>
-Container<Studentas<Container>> failas(int b, string failvardas)
+Container<Studentas<Container>> failas(string failvardas)
 {
     string failvar;
     Container<Studentas<Container>> Grupe;
     failvar = failvardas;
     stringstream buffer = skaitymas("./src/"+failvar);
     string line, z, v, p;
-
     int k = 0;
     getline(buffer, line);
     istringstream header(line);
@@ -267,23 +281,22 @@ Container<Studentas<Container>> failas(int b, string failvardas)
         Studentas<Container> laik;
         int paz, sum = 0, e;
         iss >> v >> p;
-        laik.setVardas(v);
-        laik.setPavarde(p);
+        laik.setVardas(std::move(v));
+        laik.setPavarde(std::move(p));
+        auto& pazymiai = laik.getPaz();
+        if constexpr (std::is_same_v<std::remove_cv_t<std::remove_reference_t<decltype(Grupe)>>,std::vector<Studentas<Container>>>) 
+            pazymiai.reserve(k);
         for (int i = 0; i < k; i++) {
             if (!(iss >> paz)) break;
-            laik.addPazymys(paz);
+            pazymiai.push_back(paz);
             sum += paz;
         }
         iss >> e;
         laik.setEgz(e);
-
-        if (b == 1) vidurkis(laik, sum);
+        if (b == 1) laik.setRez(0.4*(sum/k) + 0.6*e);
         else if (b == 2) skmediana(laik);
         else if (b == 3)
-        {
-            vidurkis(laik, sum);
-            skmediana(laik);
-        }
+        { laik.setRez(0.4*(sum/k) + 0.6*e); skmediana(laik); }
         Grupe.emplace_back(std::move(laik));
     }
     auto endas = chrono::high_resolution_clock::now();
@@ -293,48 +306,14 @@ Container<Studentas<Container>> failas(int b, string failvardas)
     return Grupe;
 }
 
+
 template <template<typename> class Container>
-void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovardas, int g, int h)
+void rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
 {
-     if constexpr (std::is_same_v<
-    std::remove_cv_t<std::remove_reference_t<decltype(Grupe)>>,std::list<Studentas<Container>>>
-) {
-    auto start = chrono::high_resolution_clock::now();
-    Grupe.sort([=](const Studentas<Container>& a, const Studentas<Container>& b)
-    {switch (g)
-         {
-          case 1: return h==1 ? a.getVardas() < b.getVardas() : a.getVardas() > b.getVardas();
-          case 2: return h==1 ? a.getPavarde() < b.getPavarde() : a.getPavarde() > b.getPavarde();
-          case 3: return h==1 ? a.getRez() < b.getRez() : a.getRez() > b.getRez();
-          case 4: return h==1 ? a.getMed() < b.getMed() : a.getMed() > b.getMed();
-          default: return false;
-         }});
-    auto end = chrono::high_resolution_clock::now();
-    chrono::duration<double> elaps = end - start;
-    cout << "Rikiavimo laikas naudojant konteineri list: " << setprecision(3) << elaps.count() << " s\n";
-    }
-    else
-    {
-        auto start = chrono::high_resolution_clock::now();
-        sort(std::execution::par, Grupe.begin(), Grupe.end(), [=](const Studentas<Container>& a, const Studentas<Container>& b)
-        { switch (g)
-         {
-          case 1: return h==1 ? a.getVardas() < b.getVardas() : a.getVardas() > b.getVardas();
-          case 2: return h==1 ? a.getPavarde() < b.getPavarde() : a.getPavarde() > b.getPavarde();
-          case 3: return h==1 ? a.getRez() < b.getRez() : a.getRez() > b.getRez();
-          case 4: return h==1 ? a.getMed() < b.getMed() : a.getMed() > b.getMed();
-          default: return false;
-         }
-        });
-        auto end = chrono::high_resolution_clock::now();
-        chrono::duration<double> elaps = end - start;
-    cout << "Rikiavimo laikas naudojant konteineri vector: " << fixed << setprecision(3) << elaps.count() << " s\n";
-    }
     Container<Studentas<Container>> blogai;
     if constexpr (std::is_same_v<std::remove_cv_t<std::remove_reference_t<decltype(Grupe)>>,std::list<Studentas<Container>>>)
     {
         auto startas = chrono::high_resolution_clock::now();
-
         for(auto it=Grupe.begin(); it!=Grupe.end();)
         {
             if(it->getRez() >= 5)
@@ -350,8 +329,9 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
     {
         auto startas = chrono::high_resolution_clock::now();
 
-
-        auto it = partition(Grupe.begin(), Grupe.end(), [](const auto& s) {return s.getRez() < 5;});
+        
+        auto it = partition(Grupe.begin(), Grupe.end(), [](const auto& s) {return s.getRez() >= 5;});
+        blogai.reserve(Grupe.end() - it);
         blogai.insert(blogai.end(), std::make_move_iterator(it), std::make_move_iterator(Grupe.end()));
         Grupe.erase(it, Grupe.end());
 
@@ -361,19 +341,27 @@ void rusiavimas(int b, Container<Studentas<Container>>& Grupe, string failovarda
         cout << "Rusiavimo laikas naudojant vector: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
     }
 
-    isvedimas(b, Grupe, "gerai_"+failovardas);
-    isvedimas(b, blogai, "blogai_"+failovardas);
+    rikiavimas<Container>(Grupe, "gerai_"+failovardas);
+    rikiavimas<Container>(blogai, "blogai_"+failovardas);
 }
 
+
 template<template<typename> class Container>
-void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failovardas)
+void isvedimas(const Container<Studentas<Container>>& Grupe, string failovardas)
 {
     Studentas<Container>::mode = b;
     bool arfailas = false;
-    int renkames, kiek = 0;
-    cout << "Norite isvedimo i:\n(1) Faila\n(2) Konsole" << endl;
-    while(true){if(cin >> renkames && renkames>=1 && renkames<=2) break; cout << "Neteisinga ivestis, pasirinkite 1 arba 2" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
-    if(renkames==1) arfailas = true;
+    int kiek = 0;
+    
+    if(renkames==1) 
+        arfailas = true;
+    else if(arfailas==false)
+        {
+            size_t pos = failovardas.find('_');
+            std::string result = (pos != std::string::npos) ? failovardas.substr(0, pos) : failovardas;
+            cout << "Studentu " << result << " 20 pirmu rezultatu" << endl;
+        }
+    
     ofstream wr;
     ostringstream oss;
     ostream& isved = arfailas ? static_cast<ostream&>(oss) : cout;
@@ -382,7 +370,7 @@ void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failo
     isved << setw(21) << right << "Vardas | " << setw(21) << right << "Pavarde | " << setw(21) << right;
     if(b==1) {isved << "Galutinis (Vid.)"  << " | Adresas atmintyje\n" << string(64, '-') << endl;}
             else if(b==2) {isved << "Galutinis (Med.) "  << " | Adresas atmintyje\n" << string(55, '-') << endl;}
-            else if(b==3) {isved << "Galutinis (Vid.) | " << setw(21) << right << "Galutinis (Med.)"  << setw(21) << right<<  " | Adresas atmintyje\n" << string(105, '-') << endl;}
+            else if(b==3) {isved << "Galutinis (Vid.) | " << setw(21) << right << "Galutinis (Med.)"  << setw(21) << right<<  " | Adresas atmintyje\n" << string(105, '-') << endl;}    
     for(const auto& temp:Grupe) {
         if(!arfailas && kiek++ >=20) break;
         isved << temp << " | " << &temp << endl;
@@ -399,24 +387,179 @@ void isvedimas(int b, const Container<Studentas<Container>>& Grupe, string failo
     }
     auto endas = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed = endas - startas;
+    if(arfailas)
     cout << "Failo " << failovardas << " rasymo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
 }
 
 template<template<typename> class Container>
-void dirbam(int b, string nfailas, int g, int h)
+void dirbam(string nfailas)
 {
-    Container<Studentas<Container>> Grupe = failas<Container>(b, nfailas);
-    rusiavimas<Container>(b, Grupe, nfailas, g, h);
+    Container<Studentas<Container>> Grupe = failas<Container>(nfailas);
+    kaip_rusiuojam<Container>(Grupe, nfailas);
 }
 
 template<template<typename> class Container>
-string formatavimas(const Studentas<Container>& temp, int b)
+void kaip_rusiuojam(Container<Studentas<Container>>& Grupe, string failovardas)
 {
+    if(f==1)
+        pirma_strat_rusiavimas(Grupe, failovardas);
+    else if(f==2)
+        antra_strat_rusiavimas(Grupe, failovardas);
+    else if(f==3)
+        trecia_strat_rusiavimas(Grupe, failovardas);
+    else if(f==4)
+        rusiavimas(Grupe, failovardas);
+}
+
+template <template<typename> class Container>
+void rikiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
+{
+        if constexpr (std::is_same_v<std::remove_cv_t<std::remove_reference_t<decltype(Grupe)>>,std::list<Studentas<Container>>>) 
+    {
+    auto start = chrono::high_resolution_clock::now();
+    Grupe.sort([=](const Studentas<Container>& a, const Studentas<Container>& b)
+    {switch (g)
+         {
+          case 1: return h==1 ? a.getVardas() < b.getVardas() : a.getVardas() > b.getVardas();
+          case 2: return h==1 ? a.getPavarde() < b.getPavarde() : a.getPavarde() > b.getPavarde();
+          case 3: return h==1 ? a.getRez() < b.getRez() : a.getRez() > b.getRez();
+          case 4: return h==1 ? a.getMed() < b.getMed() : a.getMed() > b.getMed();
+          default: return false;
+         }});
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elaps = end - start;
+    cout << "Rikiavimo laikas naudojant konteineri list: " << setprecision(3) << elaps.count() << " s\n";
+    isvedimas(Grupe, failovardas);
+    }
+    else
+    {   
+        auto start = chrono::high_resolution_clock::now();
+        vector<Studentas<Container>*> ptrs;
+        ptrs.reserve(Grupe.size());
+        for(auto& stud : Grupe) ptrs.push_back(&stud);
+        sort(std::execution::par, ptrs.begin(), ptrs.end(), [=](const Studentas<Container>* a, const Studentas<Container>* b) {
+            switch (g)
+             {
+              case 1: return h==1 ? a->getVardas() < b->getVardas() : a->getVardas() > b->getVardas();
+              case 2: return h==1 ? a->getPavarde() < b->getPavarde() : a->getPavarde() > b->getPavarde();
+              case 3: return h==1 ? a->getRez() < b->getRez() : a->getRez() > b->getRez();
+              case 4: return h==1 ? a->getMed() < b->getMed() : a->getMed() > b->getMed();
+              default: return false;
+             }          
+        });
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> elaps = end - start;
+        cout << "Rikiavimo laikas naudojant konteineri vector: " << fixed << setprecision(3) << elaps.count() << " s\n";
+        isvedimas_vector(ptrs, failovardas);
+    }
+}
+
+
+template<template<typename> class Container>
+void isvedimas_vector(const vector<Studentas<Container>*>& prts, string failovardas)
+{
+    Studentas<Container>::mode = b;
+    bool arfailas = false;
+    int kiek = 0;
+    
+    if(renkames==1) 
+        arfailas = true;
+    else if(arfailas==false)
+        {
+            size_t pos = failovardas.find('_');
+            std::string result = (pos != std::string::npos) ? failovardas.substr(0, pos) : failovardas;
+            cout << "Studentu " << result << " 20 pirmu rezultatu" << endl;
+        }
+    
+    ofstream wr;
     ostringstream oss;
-    oss << setw(18) << right << temp.getVardas() << " | " << setw(18) << temp.getPavarde() << " | ";
-    oss << fixed << setprecision(2);
-    if(b==1) oss << setw(18) << right << temp.getRez();
-    else if(b==2) oss << setw(18) << right << temp.getMed();
-    else if (b==3) oss << setw(18) << right << temp.getRez() << " | " << setw(22) <<  right << temp.getMed();
-    return oss.str();
+    ostream& isved = arfailas ? static_cast<ostream&>(oss) : cout;
+
+    auto startas = chrono::high_resolution_clock::now();
+    isved << setw(21) << right << "Vardas | " << setw(21) << right << "Pavarde | " << setw(21) << right;
+    if(b==1) {isved << "Galutinis (Vid.)"  << " | Adresas atmintyje\n" << string(64, '-') << endl;}
+            else if(b==2) {isved << "Galutinis (Med.) "  << " | Adresas atmintyje\n" << string(55, '-') << endl;}
+            else if(b==3) {isved << "Galutinis (Vid.) | " << setw(21) << right << "Galutinis (Med.)"  << setw(21) << right<<  " | Adresas atmintyje\n" << string(105, '-') << endl;}    
+    for(const auto* p : prts) {
+        if(!arfailas && kiek++ >=20) break;
+        isved << setw(18) << right << p->getVardas() << " | " << setw(18) << p->getPavarde() << " | " << setw(18) << fixed << right << setprecision(2);
+        if(b==1) isved << p->getRez() << " | " << setw(17) << p << endl;
+        else if(b==2) isved << p->getMed() << " | " << setw(17) << p << endl;
+        else if (b==3) isved << p->getRez() << " | " << setw(22) <<  right << p->getMed() << " | " << setw(17) << fixed << right << p << endl;
+    }
+
+    if(arfailas)
+    {
+        if(failovardas.find("txt") == std::string::npos)
+            failovardas += ".txt";
+        failovardas = "rez_"+failovardas;
+        wr.open(failovardas);
+        wr << oss.str();
+        wr.close();
+    }
+    auto endas = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = endas - startas;
+    if(arfailas)
+        cout << "Failo " << failovardas << " rasymo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
+}
+
+
+
+
+template <template<typename> class Container>
+void pirma_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
+{
+    Container<Studentas<Container>> gerai, blogai;
+    auto startas = chrono::high_resolution_clock::now();
+    for(const auto& temp : Grupe)
+    {
+        if(temp.getRez()>=5)
+            gerai.push_back(temp);
+        else
+            blogai.push_back(temp);
+    }
+    auto endas = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = endas - startas;
+    cout << "Rusiavimo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
+
+    rikiavimas<Container>(gerai, "gerai_"+failovardas);
+    rikiavimas<Container>(blogai, "blogai_"+failovardas);
+}
+
+template <template<typename> class Container>
+void antra_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
+{
+    Container<Studentas<Container>> blogai, temp = Grupe;
+    auto startas = chrono::high_resolution_clock::now(); 
+    for(auto it = Grupe.begin(); it != Grupe.end();)
+    {
+        if(it->getRez() < 5)
+        {
+            blogai.push_back(*it);
+            it = Grupe.erase(it);
+        }
+        else ++it;
+    }
+    auto endas = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = endas - startas;
+    cout << "Rusiavimo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
+
+    rikiavimas<Container>(Grupe, "gerai_"+failovardas);
+    rikiavimas<Container>(blogai, "blogai_"+failovardas);
+}
+
+template <template<typename> class Container>
+void trecia_strat_rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
+{
+    Container<Studentas<Container>> blogai;
+    auto startas = chrono::high_resolution_clock::now();
+    auto centras = partition(Grupe.begin(), Grupe.end(), [](const Studentas<Container>& temp) { return temp.getRez() < 5; });
+    blogai.insert(blogai.end(), make_move_iterator(centras), make_move_iterator(Grupe.end()));
+    Grupe.erase(centras, Grupe.end());
+    auto endas = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = endas - startas;
+    cout << "Rusiavimo laikas: " << fixed << setprecision(3) << elapsed.count() << " s" << endl;
+
+    rikiavimas<Container>(Grupe, "gerai_"+failovardas);
+    rikiavimas<Container>(blogai, "blogai_"+failovardas);
 }
