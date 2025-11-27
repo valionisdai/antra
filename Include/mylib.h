@@ -50,7 +50,6 @@ class Studentas : public Zmogus {
         Studentas(const string& v, const string& p) 
             : Zmogus(v, p) {}      
         
-        static int mode;
 
         Studentas(const Studentas& other)
                 : Zmogus(other.vard, other.pav),
@@ -135,9 +134,6 @@ void skmediana(Studentas<Container>& laik);
 
 int pazym_gen();
 int generuojame();
-
-template <template<typename> class Container>
-int Studentas <Container>::mode = 1;
 
 template<template<typename> class Container>
 void isvedimas(const Container<Studentas<Container>>& Grupe, string failovardas);
@@ -367,7 +363,6 @@ void rusiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
 template<template<typename> class Container>
 void isvedimas(const Container<Studentas<Container>>& Grupe, string failovardas)
 {
-    Studentas<Container>::mode = b;
     bool arfailas = false;
     int kiek = 0;
     
@@ -476,7 +471,6 @@ void rikiavimas(Container<Studentas<Container>>& Grupe, string failovardas)
 template<template<typename> class Container>
 void isvedimas_vector(const vector<Studentas<Container>*>& prts, string failovardas)
 {
-    Studentas<Container>::mode = b;
     bool arfailas = false;
     int kiek = 0;
     
