@@ -15,25 +15,45 @@
 using namespace std;
 namespace fs = filesystem;
 
-template <template<typename> class Container>
-class Studentas {
-    private:
+class Zmogus {
+    protected:
         string vard;
         string pav;
-        Container<int> paz;
-        int egzas;
-        float rez;
-        float med;
-    public:
-        Studentas() : vard(""), pav(""), egzas(0), rez(0.0f), med(0.0f) {}
-        
-        ~Studentas() {}
 
+    public:
+        Zmogus() : vard(""), pav("") {}
+        Zmogus(const string& v, const string& p) : vard(v), pav(p) {}
+
+        virtual ~Zmogus() = default;
+
+        const string& getVardas() const { return vard; }
+        const string& getPavarde() const { return pav; }
+        
+        void setVardas(const string& v) { vard = v; }
+        void setPavarde(const string& p) { pav = p; }
+
+        virtual void spausdinti(ostream& out) const = 0;
+};
+
+
+template <template<typename> class Container>
+class Studentas : public Zmogus {
+    protected:
+        Container<int> paz;
+        int egzas = 0;
+        float rez = 0.0f;
+        float med = 0.0f;
+        
+    public:
+        Studentas() : Zmogus() {}
+
+        Studentas(const string& v, const string& p) 
+            : Zmogus(v, p) {}      
+        
         static int mode;
 
         Studentas(const Studentas& other)
-                : vard(other.vard),
-        pav(other.pav),
+                : Zmogus(other.vard, other.pav),
         paz(other.paz),
         egzas(other.egzas),
         rez(other.rez),
@@ -54,8 +74,7 @@ class Studentas {
         }
 
         Studentas(Studentas&& other) noexcept
-            : vard(std::move(other.vard)),
-            pav(std::move(other.pav)),
+            : Zmogus(std::move(other.vard), std::move(other.pav)),
             paz(std::move(other.paz)),
             egzas(std::move(other.egzas)),
             rez(std::move(other.rez)),
@@ -75,25 +94,24 @@ class Studentas {
         return *this;
         }
 
-        void setVardas(const string& v) {vard = v;}
-        void setVardas(string&& v) {vard = std::move(v);}
-        void setPavarde(const string& p) {pav = p;}
-        void setPavarde(string&& p) {pav = std::move(p);}
-        void addPazymys(int p) {paz.push_back(p);}
-        void setEgz(int e) {egzas = e;}
-        void setRez(float r) {rez = r;}
-        void setMed(float m) {med = m;}
 
-        const string& getVardas() const {return vard;}
-        const string& getPavarde() const {return pav;} 
+        void addPazymys(int p) { paz.push_back(p); }
+        void setEgz(int e) { egzas = e; }
+        void setRez(float r) { rez = r; }
+        void setMed(float m) {med = m; }
+
         Container<int>& getPaz() {return paz;}
         const Container<int>& getPaz() const {return paz;}
         int getEgz() const {return egzas;}
         float getRez() const {return rez;}
         float getMed() const {return med;}
 
+        void spausdinti(ostream& out) const override {
+            out << vard << " " << pav << " ";
+        }
+
         friend ostream& operator<<(ostream& out, const Studentas& temp) {
-            out << temp.getVardas() << " " << temp.getPavarde();
+            temp.spausdinti(out);
             return out;
         }
 
