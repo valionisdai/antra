@@ -1,9 +1,12 @@
+# v.1.5
+  Pridėta klasė `Zmogus`. Dabar klasė `Studentas` turi paveldėjimą iš klasės `Zmogus`. Optimizuotas kodas. Veikimo sparta nesikeičia.
+
 # v.1.2
-  Optimizuotas kodas
-  Pridėta "rule of three" ir įvesties/išvesties operatoriai klasėje.  
-  #### Perdengimai:
-  Operatorius `>>` yra perdengtas, nes galima turėti kelias versijas priklausomai nuo srauto tipo (`istream` arba `ifstream`). Rankinė įvestis leidžia vartotojui įvesti duomenis per konsolę. Įvestis iš failo leidžia nuskaityti studentų duomenis iš tekstinio failo. Automatinė generacija nėra operatorius – tai klasės metodas, kuris sugeneruoja atsitiktinius ar pavyzdinius duomenis.  
-  Operatorius `<<` yra perdengtas vienu metodu, bet jis veikia su bet kuriuo `ostream` objektu (`cout`, `ofstream`).Tai leidžia spausdinti studento vardą, pavardę, pažymius, vidurkį ir egzamino rezultatą į ekraną arba į failą naudojant tą patį operatorių.
+Optimizuotas kodas
+Pridėta "rule of three" ir įvesties/išvesties operatoriai klasėje.  
+#### Perdengimai:
+Operatorius `>>` yra perdengtas, nes galima turėti kelias versijas priklausomai nuo srauto tipo (`istream` arba `ifstream`). Rankinė įvestis leidžia vartotojui įvesti duomenis per konsolę. Įvestis iš failo leidžia nuskaityti studentų duomenis iš tekstinio failo. Automatinė generacija nėra operatorius – tai klasės metodas, kuris sugeneruoja atsitiktinius ar pavyzdinius duomenis.  
+Operatorius `<<` yra perdengtas vienu metodu, bet jis veikia su bet kuriuo `ostream` objektu (`cout`, `ofstream`).Tai leidžia spausdinti studento vardą, pavardę, pažymius, vidurkį ir egzamino rezultatą į ekraną arba į failą naudojant tą patį operatorių.
 
 # v1.1
 Optimizuotas kodas Pridetas CMakeLists.txt failas.   
