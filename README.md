@@ -1,7 +1,10 @@
-# v.1.5
+# v2.0
+  Pridėta Doxygen dokumentacija. Atlikti testai, naudojant doctest.
+
+# v1.5
   Pridėta klasė `Zmogus`. Dabar klasė `Studentas` turi paveldėjimą iš klasės `Zmogus`. Optimizuotas kodas. Veikimo sparta nesikeičia.
 
-# v.1.2
+# v1.2
 Optimizuotas kodas
 Pridėta "rule of three" ir įvesties/išvesties operatoriai klasėje.  
 #### Perdengimai:
