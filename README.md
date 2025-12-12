@@ -1,5 +1,8 @@
 # v.1.5
-  Pridėta klasė `Zmogus`. Dabar klasė `Studentas` turi paveldėjimą iš klasės `Zmogus`. Optimizuotas kodas. Veikimo sparta nesikeičia.
+- **Nauja:** abstrakti bazinė klasė `Zmogus` (negali būti instancijuojama).
+- **Nauja:** iš `Zmogus` išvestinė klasė `Studentas`, su visomis ankstesnėse versijose realizuotomis savybėmis.
+- Negalima inicijuoti klasės `Zmogus` pvz: `Zmogus z`.
+- Klas `Studentas` toliau palaiko trijų metodų taisyklę.
 
 # v.1.2
 Optimizuotas kodas
