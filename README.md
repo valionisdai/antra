@@ -1,8 +1,19 @@
 # v2.0
   Pridėta Doxygen dokumentacija. Atlikti testai, naudojant doctest.
+  Norint atlikti testus reikia (naudojant VS Code):
+  - Visus `.cpp` ir `.h` failus turėti viename "root" (pagrindiniame) aplanke, kuriame bus vykdoma programa.
+  - `.txt` failai nėra reikalingi testams.
+  - Atsisiūsti *doctest.h* failą iš Doctest GitHub puslapio.
+  - Įkelti jį i tą patį "root" aplanką, kuriame yra visi `.cpp` ir `.h` failai.
+  - *tests_studentas.cpp* failą laikyti tame pačiame pagrindiniame aplanke (šalia `.cpp` ir `.h` failų).
+  - Sukompiliuoti tests_studentas.cpp failą ir paleisti sukompiliuotą programa (per VS Code terminalą.
+  - Terminale turite matyti atsakymus.
 
 # v1.5
-  Pridėta klasė `Zmogus`. Dabar klasė `Studentas` turi paveldėjimą iš klasės `Zmogus`. Optimizuotas kodas. Veikimo sparta nesikeičia.
+- **Nauja:** abstrakti bazinė klasė `Zmogus` (negali būti instancijuojama).
+- **Nauja:** iš `Zmogus` išvestinė klasė `Studentas`, su visomis ankstesnėse versijose realizuotomis savybėmis.
+- Negalima inicijuoti klasės `Zmogus` pvz: `Zmogus z`.
+- Klasė `Studentas` toliau palaiko trijų metodų taisyklę.
 
 # v1.2
 Optimizuotas kodas
