@@ -2,7 +2,7 @@
 - **Nauja:** abstrakti bazinė klasė `Zmogus` (negali būti instancijuojama).
 - **Nauja:** iš `Zmogus` išvestinė klasė `Studentas`, su visomis ankstesnėse versijose realizuotomis savybėmis.
 - Negalima inicijuoti klasės `Zmogus` pvz: `Zmogus z`.
-- Klas `Studentas` toliau palaiko trijų metodų taisyklę.
+- Klasė `Studentas` toliau palaiko trijų metodų taisyklę.
 
 # v.1.2
 Optimizuotas kodas
