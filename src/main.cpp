@@ -11,6 +11,20 @@ int main()
     vector<string> failai_txt;
     int a, c, d, e;
 
+    //parodymas kad veikia "rule-of-three"
+    Studentas<vector> s1("Jonas", "Jonaitis");
+    s1.addPazymys(10);
+    s1.addPazymys(9);
+
+    Studentas<vector> s2 = s1;  
+    Studentas<vector> s3;
+    s3 = s1;                  
+
+    cout << s1 << endl;
+    cout << s2 << endl;
+    cout << s3 << endl;
+    //----------
+    
     cout << "Ar turite duomenis? (1 - taip, 2 - ne)" << endl;
     while(true) {if(cin >> d && d>=1 && d<=2) break; cout << "Neteisinga ivestis, pasirinkite 1 arba 2" << endl; cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');}
     if(d==2)
@@ -114,5 +128,6 @@ int main()
     if(kl==2) break;
     }
 }
+
 
 
